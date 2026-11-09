@@ -1,0 +1,8 @@
+{
+  "name": "Friends United FT - គ្រប់គ្រងក្រុមកីឡាបាល់ទាត់",
+  "description": "កម្មវិធីគ្រប់គ្រងទិន្នន័យកីឡាករ កាលវិភាគប្រកួត ចំណូលកីឡាករបង់ចូលមួយប្រកួតម្តង ចំណាយថ្លៃតារាង វត្តមាន និងស្ថិតិការប្រកួតយ៉ាងលម្អិត ព្រមទាំងការភ្ជាប់និងធ្វើសមកាលកម្មទិន្នន័យជាមួយ Google Sheets",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
