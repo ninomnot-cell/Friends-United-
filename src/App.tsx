@@ -10,6 +10,14 @@ import { StatsView } from './components/StatsView';
 import { MatchDetailModal } from './components/MatchDetailModal';
 import { GoogleSheetsModal } from './components/GoogleSheetsModal';
 import { 
+  useFirestoreSync, 
+  saveClubSettingsToFirestore, 
+  savePlayerToFirestore, 
+  deletePlayerFromFirestore, 
+  saveMatchToFirestore, 
+  deleteMatchFromFirestore 
+} from './utils/firestoreSync';
+import { 
   LayoutDashboard, 
   Users, 
   Calendar, 
@@ -17,7 +25,8 @@ import {
   Trophy,
   Plus,
   FileSpreadsheet,
-  CheckCircle2
+  CheckCircle2,
+  CloudCheck
 } from 'lucide-react';
 
 const STORAGE_KEYS = {
@@ -81,6 +90,9 @@ export default function App() {
 
   // Navigation tab
   const [activeTab, setActiveTab] = useState<'dashboard' | 'players' | 'matches' | 'finances' | 'stats'>('dashboard');
+
+  // Real-time Firestore Cloud Database Synchronization
+  useFirestoreSync(settings, setSettings, players, setPlayers, matches, setMatches);
 
   // Modals state
   const [isOpenNewPlayerModal, setIsOpenNewPlayerModal] = useState(false);
@@ -155,6 +167,7 @@ export default function App() {
       savePlayersToStorage(next);
       return next;
     });
+    savePlayerToFirestore(newPlayer);
     showToast(`បានកត់ត្រាទុកកីឡាករ "${newPlayer.name}" (${newPlayer.code}) ដោយជោគជ័យ!`, 'success');
   };
 
@@ -164,6 +177,7 @@ export default function App() {
       savePlayersToStorage(next);
       return next;
     });
+    savePlayerToFirestore(updatedPlayer);
     showToast(`បានកែសម្រួលព័ត៌មានកីឡាករ "${updatedPlayer.name}" ដោយជោគជ័យ!`, 'success');
   };
 
@@ -174,12 +188,14 @@ export default function App() {
       savePlayersToStorage(next);
       return next;
     });
+    deletePlayerFromFirestore(playerId);
     showToast(`បានលុបកីឡាករ ${deleted ? `"${deleted.name}"` : ''} ចេញពីក្រុមរួចរាល់!`, 'info');
   };
 
   // Match Handlers
   const handleAddMatch = (newMatch: Match) => {
     setMatches(prev => [newMatch, ...prev]);
+    saveMatchToFirestore(newMatch);
   };
 
   const handleUpdateMatch = (updatedMatch: Match) => {
@@ -187,6 +203,7 @@ export default function App() {
     if (selectedMatchForDetail && selectedMatchForDetail.id === updatedMatch.id) {
       setSelectedMatchForDetail(updatedMatch);
     }
+    saveMatchToFirestore(updatedMatch);
   };
 
   const handleDeleteMatch = (matchId: string) => {
@@ -194,6 +211,7 @@ export default function App() {
     if (selectedMatchForDetail?.id === matchId) {
       setSelectedMatchForDetail(null);
     }
+    deleteMatchFromFirestore(matchId);
   };
 
   // Backup Data Export
@@ -256,7 +274,10 @@ export default function App() {
       {/* Club Top Header */}
       <Header
         settings={settings}
-        onUpdateSettings={setSettings}
+        onUpdateSettings={newSettings => {
+          setSettings(newSettings);
+          saveClubSettingsToFirestore(newSettings);
+        }}
         players={players}
         matches={matches}
         onOpenNewPlayer={handleOpenNewPlayer}

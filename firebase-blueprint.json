@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "Player": {
+      "title": "Player",
+      "description": "Football team player profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "number": { "type": "number" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "nickname": { "type": "string" },
+        "position": { "type": "string" },
+        "status": { "type": "string" },
+        "joinedDate": { "type": "string" },
+        "avatar": { "type": "string" }
+      },
+      "required": ["id", "number", "name"]
+    },
+    "Match": {
+      "title": "Match",
+      "description": "Football match schedule and finance tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "matchNumber": { "type": "number" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "stadium": { "type": "string" },
+        "format": { "type": "string" },
+        "opponentName": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "matchNumber", "date", "opponentName"]
+    },
+    "ClubSettings": {
+      "title": "ClubSettings",
+      "description": "Football club general settings",
+      "type": "object",
+      "properties": {
+        "clubName": { "type": "string" },
+        "clubShortName": { "type": "string" },
+        "clubLogo": { "type": "string" },
+        "managerName": { "type": "string" },
+        "currency": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/players/{playerId}": {
+      "schema": "Player",
+      "description": "Collection of team players"
+    },
+    "/matches/{matchId}": {
+      "schema": "Match",
+      "description": "Collection of match schedules"
+    },
+    "/settings/club": {
+      "schema": "ClubSettings",
+      "description": "Club general settings document"
+    }
+  }
+}

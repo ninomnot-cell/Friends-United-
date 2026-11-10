@@ -11,6 +11,7 @@ import {
 } from '../utils/formatters';
 import confetti from 'canvas-confetti';
 import { MatchShareModal } from './MatchShareModal';
+import { MatchPosterModal } from './MatchPosterModal';
 import { 
   X, 
   Trophy, 
@@ -38,7 +39,8 @@ import {
   Sparkles,
   CheckCheck,
   Edit3,
-  Camera
+  Camera,
+  Image as ImageIcon
 } from 'lucide-react';
 
 interface MatchDetailModalProps {
@@ -68,6 +70,7 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
   const [showTelegramPreview, setShowTelegramPreview] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [voteFilter, setVoteFilter] = useState<'all' | 'flaked' | 'yes' | 'no' | 'unvoted'>('all');
+  const [showPosterModal, setShowPosterModal] = useState(false);
 
   // Opponent editing state
   const [isEditingOpponent, setIsEditingOpponent] = useState(false);
@@ -687,15 +690,24 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
               </button>
             </div>
 
-            {/* Share and Telegram Buttons */}
-            <div className="flex items-center gap-1.5">
+            {/* Share, Poster and Telegram Buttons */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <button
+                onClick={() => setShowPosterModal(true)}
+                className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-sm"
+                title="បង្កើតរូបភាព Poster សម្រាប់ផុស Facebook"
+              >
+                <ImageIcon className="w-3.5 h-3.5" />
+                <span>🎨 Poster</span>
+              </button>
+
               <button
                 onClick={() => setShowShareModal(true)}
                 className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-sm"
                 title="ចែករំលែកទៅកាន់បណ្តាញសង្គម / Other Device"
               >
                 <Share2 className="w-3.5 h-3.5" />
-                <span>ចែករំលែកប្រកួត</span>
+                <span>ចែករំលែក</span>
               </button>
 
               <button
@@ -1809,6 +1821,16 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
           awayKitColor: '#ffffff',
         }}
       />
+
+      {showPosterModal && (
+        <MatchPosterModal
+          match={match}
+          clubSettings={settings}
+          clubName={clubName}
+          currency={currency}
+          onClose={() => setShowPosterModal(false)}
+        />
+      )}
 
     </div>
   );

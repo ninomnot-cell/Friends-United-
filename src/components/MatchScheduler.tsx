@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Match, Player, MatchFormat } from '../types';
 import { formatDateKh, formatCurrency, calculateMatchFinance, generateTelegramShareText, compressAndResizeImage } from '../utils/formatters';
 import { MatchDetailModal } from './MatchDetailModal';
+import { MatchPosterModal } from './MatchPosterModal';
 import { 
   Plus, 
   Calendar, 
@@ -18,7 +19,8 @@ import {
   ChevronRight,
   Filter,
   Check,
-  Camera
+  Camera,
+  Image as ImageIcon
 } from 'lucide-react';
 
 interface MatchSchedulerProps {
@@ -53,6 +55,7 @@ export const MatchScheduler: React.FC<MatchSchedulerProps> = ({
   const [activeFilter, setActiveFilter] = useState<'all' | 'scheduled' | 'finished'>('all');
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [copiedMatchId, setCopiedMatchId] = useState<string | null>(null);
+  const [posterMatch, setPosterMatch] = useState<Match | null>(null);
 
   // New Match Form State
   const [opponentName, setOpponentName] = useState('');
@@ -135,6 +138,9 @@ export const MatchScheduler: React.FC<MatchSchedulerProps> = ({
 
     onAddMatch(newMatch);
     onCloseNewMatchModal();
+
+    // Automatically open poster generator for the newly created match schedule
+    setPosterMatch(newMatch);
 
     // Reset fields
     setOpponentName('');
@@ -342,23 +348,34 @@ export const MatchScheduler: React.FC<MatchSchedulerProps> = ({
                 </div>
 
                 {/* Bottom Actions */}
-                <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-800/60">
-                  <button
-                    onClick={() => handleCopyTelegram(match)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
-                  >
-                    {copiedMatchId === match.id ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>បានចម្លងរួចរាល់!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" />
-                        <span>ចម្លងរបាយការណ៍ Telegram</span>
-                      </>
-                    )}
-                  </button>
+                <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-800/60 flex-wrap">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      onClick={() => handleCopyTelegram(match)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      {copiedMatchId === match.id ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>បានចម្លងរួចរាល់!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>ចម្លងរបាយការណ៍ Telegram</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      onClick={() => setPosterMatch(match)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                      title="រចនារូបភាព Poster សម្រាប់ផុស Facebook"
+                    >
+                      <ImageIcon className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>🎨 បង្កើត Poster ផុស</span>
+                    </button>
+                  </div>
 
                   <div className="flex items-center gap-2">
                     <button
@@ -654,6 +671,16 @@ export const MatchScheduler: React.FC<MatchSchedulerProps> = ({
             </form>
           </div>
         </div>
+      )}
+
+      {/* Poster Generator Modal */}
+      {posterMatch && (
+        <MatchPosterModal
+          match={posterMatch}
+          clubName={clubName}
+          currency={currency}
+          onClose={() => setPosterMatch(null)}
+        />
       )}
 
     </div>
